@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>ToDo.Api</AssemblyName>
+    <RootNamespace>ToDo.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
