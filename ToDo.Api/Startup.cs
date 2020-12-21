@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ToDo.Api.Data;
 
 namespace ToDo.Api
 {
@@ -27,7 +28,11 @@ namespace ToDo.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddDbContext<DbContext>();
+      services.AddDbContext<ToDoDbContext>(opts =>
+      {
+        opts.UseSqlServer(Configuration.GetConnectionString("Default"));
+      });
+      
       services.AddControllers();
       services.AddSwaggerGen(c =>
       {
@@ -45,7 +50,7 @@ namespace ToDo.Api
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDo.Web v1"));
       }
 
-      app.UseHttpsRedirection();
+      //app.UseHttpsRedirection();
 
       app.UseRouting();
 
