@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ToDo.Api.Data
 {
-  public class ToDoDbContext : DbContext
+  public class ToDoContext : DbContext
   {
-    public ToDoDbContext(DbContextOptions options) : base(options)
+    public ToDoContext(DbContextOptions options) : base(options)
     {
       
     }

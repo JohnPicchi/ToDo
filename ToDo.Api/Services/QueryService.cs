@@ -5,27 +5,28 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ToDo.Api.Data;
 using ToDo.Api.Dtos;
+using ToDo.Api.Exceptions;
 
 namespace ToDo.Api.Services
 {
-  internal interface IQueryService
+  public interface IQueryService
   {
-    Task<IEnumerable<ToDoDto>> Get();
-    Task<ToDoDto> Get(Guid id);
+    Task<IEnumerable<ToDoDto>> GetAllAsync();
+    Task<ToDoDto> GetAsync(Guid id);
   }
 
   internal class QueryService : IQueryService
   {
-    private readonly ToDoDbContext toDoDbContext;
+    private readonly ToDoContext toDoContext;
     
-    public QueryService(ToDoDbContext toDoDbContext)
+    public QueryService(ToDoContext toDoContext)
     {
-      this.toDoDbContext = toDoDbContext;
+      this.toDoContext = toDoContext;
     }
     
-    public async Task<IEnumerable<ToDoDto>> Get()
+    public async Task<IEnumerable<ToDoDto>> GetAllAsync()
     {
-      var toDos = await toDoDbContext.ToDos
+      var toDos = await toDoContext.ToDos
         .ToListAsync();
 
       return toDos
@@ -33,14 +34,15 @@ namespace ToDo.Api.Services
         .ToList();
     }
 
-    public async Task<ToDoDto> Get(Guid id)
+    public async Task<ToDoDto> GetAsync(Guid id)
     {
-      var toDo = await toDoDbContext.ToDos
+      var toDo = await toDoContext.ToDos
         .FirstOrDefaultAsync(t => t.Id == id);
 
-      return toDo != null
-        ? new ToDoDto(toDo)
-        : null;
+      if (toDo == null)
+        throw HttpResponseException.NotFound(new { Message = "ToDo Id not found." });
+
+      return new ToDoDto(toDo);
     }
   }
 }

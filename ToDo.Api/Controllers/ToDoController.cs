@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ToDo.Api.Data;
 using ToDo.Api.Dtos;
+using ToDo.Api.Services;
 
 namespace ToDo.Api.Controllers
 {
@@ -13,79 +11,51 @@ namespace ToDo.Api.Controllers
   [Route("[controller]")]
   public class ToDoController : ControllerBase
   {
-    private readonly ToDoDbContext toDoDbContext;
-    
-    public ToDoController(ToDoDbContext toDoDbContext)
+    public ToDoController()
     {
-      this.toDoDbContext = toDoDbContext;
+      
     }
 
     [HttpGet]
-    public async Task<IEnumerable<ToDoDto>> Get()
+    public async Task<IEnumerable<ToDoDto>> Get([FromServices] IQueryService queryService)
     {
-      var toDos = await toDoDbContext.ToDos
-        .ToListAsync();
-
-      return toDos
-        .Select(t => new ToDoDto(t))
-        .ToList();
+      var toDos = await queryService.GetAllAsync();
+      
+      return toDos;
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    public async Task<IActionResult> Get([FromServices] IQueryService queryService, [FromRoute] Guid id)
     {
-      var toDo = await toDoDbContext.ToDos
-        .FirstOrDefaultAsync(t => t.Id == id);
-
-      if (toDo == null)
-        return NotFound(new {Message = "ToDo not found."});
-
-      return Ok(new ToDoDto(toDo));
+      var toDo = await queryService.GetAsync(id);
+      
+      return Ok(toDo);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(ToDoDto toDoDto)
+    public async Task<IActionResult> Create([FromServices] ICreateService createService, ToDoDto toDoDto)
     {
-      var data = Data.ToDo.Create(toDoDto);
-      
-      var result = await toDoDbContext.ToDos.AddAsync(data);
-      
-      await toDoDbContext.SaveChangesAsync();
-      
-      var toDo = new ToDoDto(result.Entity);
+      var toDo = await createService.CreateAsync(toDoDto);
       
       return CreatedAtAction(nameof(Get), new { id = toDo.Id }, toDo);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Edit([FromRoute] Guid id, ToDoDto toDo)
+    public async Task<IActionResult> Edit([FromServices] IUpdateService updateService, [FromRoute] Guid id,
+      ToDoDto toDoDto)
     {
-      var data = await toDoDbContext.ToDos
-        .SingleOrDefaultAsync(t => t.Id == id);
+      toDoDto.Id = id;
 
-      if (data == null)
-        return NotFound(new { Message = "ToDo not found."});
-      
-      data.Update(toDo);
-      
-      await toDoDbContext.SaveChangesAsync();
+      await updateService.UpdateAsync(toDoDto);
 
       return Ok();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete([FromServices] IDeleteService deleteService, Guid id)
     {
-      var data = await toDoDbContext.ToDos
-        .SingleOrDefaultAsync(t => t.Id == id);
+      await deleteService.DeleteAsync(id);
       
-      if (data == null)
-        return NotFound(new { Message = "ToDo not found." });
-
-      toDoDbContext.ToDos.Remove(data);
-      
-      await toDoDbContext.SaveChangesAsync();
-
       return NoContent();
     }
   }

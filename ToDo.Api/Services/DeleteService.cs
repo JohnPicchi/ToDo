@@ -4,31 +4,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ToDo.Api.Data;
+using ToDo.Api.Exceptions;
 
 namespace ToDo.Api.Services
 {
-  internal interface IDeleteService
+  public interface IDeleteService
   {
-    Task Delete(Guid id);
+    Task DeleteAsync(Guid id);
   }
   
   internal class DeleteService : IDeleteService
   {
-    private readonly ToDoDbContext toDoDbContext;
+    private readonly ToDoContext toDoContext;
     
-    public DeleteService(ToDoDbContext toDoDbContext)
+    public DeleteService(ToDoContext toDoContext)
     {
-      this.toDoDbContext = toDoDbContext;
+      this.toDoContext = toDoContext;
     }
     
-    public async Task Delete(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-      var data = await toDoDbContext.ToDos
+      var data = await toDoContext.ToDos
         .SingleOrDefaultAsync(t => t.Id == id);
       
-      toDoDbContext.ToDos.Remove(data);
+      if(data == null)
+        throw HttpResponseException.NotFound(new { Message = "ToDo Id not found." });
       
-      await toDoDbContext.SaveChangesAsync();
+      toDoContext.ToDos.Remove(data);
+      
+      await toDoContext.SaveChangesAsync();
     }
   }
 }

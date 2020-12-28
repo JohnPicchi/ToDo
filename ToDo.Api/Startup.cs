@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ToDo.Api.Data;
+using ToDo.Api.Filters;
+using ToDo.Api.Services;
 
 namespace ToDo.Api
 {
@@ -28,16 +30,25 @@ namespace ToDo.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddDbContext<ToDoDbContext>(opts =>
+      services.AddDbContext<ToDoContext>(opts =>
       {
         opts.UseSqlServer(Configuration.GetConnectionString("Default"));
       });
       
-      services.AddControllers();
+      services.AddControllers(opts =>
+      {
+        opts.Filters.Add(new HttpResponseExceptionFilter());
+      });
+      
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDo.Web", Version = "v1" });
       });
+
+      services.AddScoped<ICreateService, CreateService>();
+      services.AddScoped<IUpdateService, UpdateService>();
+      services.AddScoped<IQueryService, QueryService>();
+      services.AddScoped<IDeleteService, DeleteService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

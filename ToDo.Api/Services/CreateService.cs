@@ -7,27 +7,27 @@ using ToDo.Api.Dtos;
 
 namespace ToDo.Api.Services
 {
-  internal interface ICreateService
+  public interface ICreateService
   {
-    Task<ToDoDto> Create(ToDoDto toDo);
+    Task<ToDoDto> CreateAsync(ToDoDto toDo);
   }
   
   internal class CreateService : ICreateService
   {
-    private readonly ToDoDbContext toDoDbContext;
+    private readonly ToDoContext toDoContext;
     
-    public CreateService(ToDoDbContext toDoDbContext)
+    public CreateService(ToDoContext toDoContext)
     {
-      this.toDoDbContext = toDoDbContext;
+      this.toDoContext = toDoContext;
     }
     
-    public async Task<ToDoDto> Create(ToDoDto toDo)
+    public async Task<ToDoDto> CreateAsync(ToDoDto toDo)
     {
       var data = Data.ToDo.Create(toDo);
 
-      var result = await toDoDbContext.ToDos.AddAsync(data);
+      var result = await toDoContext.ToDos.AddAsync(data);
 
-      await toDoDbContext.SaveChangesAsync();
+      await toDoContext.SaveChangesAsync();
 
       return new ToDoDto(result.Entity);
     }

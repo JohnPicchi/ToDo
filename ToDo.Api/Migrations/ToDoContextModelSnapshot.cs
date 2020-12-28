@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDo.Api.Data;
 
 namespace ToDo.Api.Migrations
 {
-    [DbContext(typeof(ToDoDbContext))]
-    [Migration("20201221023915_InitialDbCreation")]
-    partial class InitialDbCreation
+    [DbContext(typeof(ToDoContext))]
+    partial class ToDoContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
