@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ToDo.Api.Data;
 using ToDo.Api.Dtos;
+using ToDo.Api.Extensions;
+using ToDo.Repositories;
 
 namespace ToDo.Api.Services
 {
@@ -14,22 +15,20 @@ namespace ToDo.Api.Services
   
   internal class CreateService : ICreateService
   {
-    private readonly ToDoContext toDoContext;
+    private readonly IToDoRepository toDoRepository;
     
-    public CreateService(ToDoContext toDoContext)
+    public CreateService(IToDoRepository toDoRepository)
     {
-      this.toDoContext = toDoContext;
+      this.toDoRepository = toDoRepository;
     }
     
-    public async Task<ToDoDto> CreateAsync(ToDoDto toDo)
+    public async Task<ToDoDto> CreateAsync(ToDoDto dto)
     {
-      var data = Data.ToDo.Create(toDo);
+      var domain = dto.ToDomainModel();
 
-      var result = await toDoContext.ToDos.AddAsync(data);
+      var result = await toDoRepository.CreateAsync(domain);
 
-      await toDoContext.SaveChangesAsync();
-
-      return new ToDoDto(result.Entity);
+      return new ToDoDto(result);
     }
   }
 }

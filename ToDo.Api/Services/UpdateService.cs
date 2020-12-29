@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Api.Data;
 using ToDo.Api.Dtos;
-using ToDo.Api.Exceptions;
+using ToDo.Api.Extensions;
+using ToDo.Repositories;
 
 namespace ToDo.Api.Services
 {
@@ -16,25 +16,18 @@ namespace ToDo.Api.Services
   
   internal class UpdateService : IUpdateService
   {
-    private readonly ToDoContext toDoContext;
-
-    public UpdateService(ToDoContext toDoContext)
+    private readonly IToDoRepository toDoRepository;
+    
+    public UpdateService(IToDoRepository toDoRepository)
     {
-      this.toDoContext = toDoContext;
+      this.toDoRepository = toDoRepository;
     }
     
-    public async Task UpdateAsync(ToDoDto toDo)
-    {
-      var data = await toDoContext.ToDos
-        .SingleOrDefaultAsync(t => t.Id == toDo.Id);
+    public async Task UpdateAsync(ToDoDto dto)
+    { 
+      var domain = dto.ToDomainModel();
 
-      if (data == null)
-        throw HttpResponseException.NotFound(new { Message = "ToDo Id not found." });
-      
-      data.Update(toDo);
-
-      await toDoContext.SaveChangesAsync();
-
+      await toDoRepository.UpdateAsync(domain);
     }
   }
 }

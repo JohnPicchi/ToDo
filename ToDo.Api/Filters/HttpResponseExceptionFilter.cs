@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using ToDo.Api.Exceptions;
+using ToDo.Infrastructure.Exceptions;
+
 
 namespace ToDo.Api.Filters
 {
@@ -17,11 +19,11 @@ namespace ToDo.Api.Filters
 
     public void OnActionExecuted(ActionExecutedContext context)
     {
-      if (context.Exception is HttpResponseException exception)
+      if (context.Exception is NotFoundException exception)
       {
-        context.Result = new ObjectResult(exception.Value)
+        context.Result = new ObjectResult(new { Message = $"Unable to find todo with id of {exception.Id}" })
         {
-          StatusCode = exception.Status
+          StatusCode = StatusCodes.Status404NotFound
         };
         
         context.ExceptionHandled = true;

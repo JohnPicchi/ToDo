@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Api.Data;
 using ToDo.Api.Dtos;
-using ToDo.Api.Exceptions;
+using ToDo.Repositories;
+
 
 namespace ToDo.Api.Services
 {
@@ -17,18 +17,16 @@ namespace ToDo.Api.Services
 
   internal class QueryService : IQueryService
   {
-    private readonly ToDoContext toDoContext;
-    
-    public QueryService(ToDoContext toDoContext)
+    private readonly IToDoRepository toDoRepository;
+    public QueryService(IToDoRepository toDoRepository)
     {
-      this.toDoContext = toDoContext;
+      this.toDoRepository = toDoRepository;
     }
     
     public async Task<IEnumerable<ToDoDto>> GetAllAsync()
     {
-      var toDos = await toDoContext.ToDos
-        .ToListAsync();
-
+      var toDos = await toDoRepository.GetAllAsync();
+      
       return toDos
         .Select(t => new ToDoDto(t))
         .ToList();
@@ -36,12 +34,8 @@ namespace ToDo.Api.Services
 
     public async Task<ToDoDto> GetAsync(Guid id)
     {
-      var toDo = await toDoContext.ToDos
-        .FirstOrDefaultAsync(t => t.Id == id);
-
-      if (toDo == null)
-        throw HttpResponseException.NotFound(new { Message = "ToDo Id not found." });
-
+      var toDo = await toDoRepository.GetAsync(id);
+      
       return new ToDoDto(toDo);
     }
   }

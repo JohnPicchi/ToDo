@@ -12,9 +12,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Api.Data;
 using ToDo.Api.Filters;
 using ToDo.Api.Services;
+using ToDo.Infrastructure;
+using ToDo.Infrastructure.Repositories;
+using ToDo.Repositories;
 
 namespace ToDo.Api
 {
@@ -49,6 +51,7 @@ namespace ToDo.Api
       services.AddScoped<IUpdateService, UpdateService>();
       services.AddScoped<IQueryService, QueryService>();
       services.AddScoped<IDeleteService, DeleteService>();
+      services.AddScoped<IToDoRepository, ToDoRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ToDo.Api.Migrations
+namespace ToDo.Infrastructure.Migrations
 {
     public partial class InitialMigration : Migration
     {

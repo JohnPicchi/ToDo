@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ToDo.Api.Data;
-using ToDo.Api.Exceptions;
+using ToDo.Repositories;
 
 namespace ToDo.Api.Services
 {
@@ -15,24 +14,16 @@ namespace ToDo.Api.Services
   
   internal class DeleteService : IDeleteService
   {
-    private readonly ToDoContext toDoContext;
+    private readonly IToDoRepository toDoRepository;
     
-    public DeleteService(ToDoContext toDoContext)
+    public DeleteService(IToDoRepository toDoRepository)
     {
-      this.toDoContext = toDoContext;
+      this.toDoRepository = toDoRepository;
     }
     
     public async Task DeleteAsync(Guid id)
     {
-      var data = await toDoContext.ToDos
-        .SingleOrDefaultAsync(t => t.Id == id);
-      
-      if(data == null)
-        throw HttpResponseException.NotFound(new { Message = "ToDo Id not found." });
-      
-      toDoContext.ToDos.Remove(data);
-      
-      await toDoContext.SaveChangesAsync();
+      await toDoRepository.DeleteAsync(id);
     }
   }
 }

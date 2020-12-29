@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,7 +14,7 @@ namespace ToDo.Api.Dtos
       
     }
     
-    public ToDoDto(Data.ToDo data)
+    public ToDoDto(Models.ToDo data)
     {
       Id = data.Id;
       Title = data.Title;
@@ -29,7 +31,7 @@ namespace ToDo.Api.Dtos
 
     public string Description { get; set; }
 
-    public uint Position { get; set; }
+    public int Position { get; set; }
     
     public bool IsCompleted { get; set; }
 

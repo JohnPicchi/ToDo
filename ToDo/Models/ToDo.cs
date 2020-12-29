@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
-using ToDo.Api.Dtos;
 
-namespace ToDo.Api.Data
+namespace ToDo.Models
 {
   public class ToDo
   {
-    public static ToDo Create(ToDoDto toDo)
+    public ToDo() {  }
+
+    public static ToDo Create(ToDo toDo)
     {
       return new ToDo
       {
-        Id = Guid.NewGuid(),
         Title = toDo.Title,
         Description = toDo.Description,
         Position = toDo.Position,
         IsCompleted = toDo.IsCompleted,
-        DateCreatedUtc = DateTime.UtcNow
+        DateCreatedUtc = DateTime.UtcNow,
       };
     }
-
-    public void Update(ToDoDto toDo)
+    
+    public void Update(ToDo toDo)
     {
       Title = toDo.Title;
       Description = toDo.Description;
@@ -36,8 +37,8 @@ namespace ToDo.Api.Data
     public string Title { get; set; }
 
     public string Description { get; set; }
-    
-    public uint Position { get; set; }
+
+    public int Position { get; set; }
 
     public bool IsCompleted { get; set; }
 
