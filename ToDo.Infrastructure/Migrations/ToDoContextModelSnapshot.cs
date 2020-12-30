@@ -8,7 +8,7 @@ using ToDo.Infrastructure;
 
 namespace ToDo.Infrastructure.Migrations
 {
-    [DbContext(typeof(ToDoContext))]
+    [DbContext(typeof(DatabaseContext))]
     partial class ToDoContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

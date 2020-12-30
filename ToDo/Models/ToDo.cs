@@ -38,7 +38,7 @@ namespace ToDo.Models
 
     public string Description { get; set; }
 
-    public int Position { get; set; }
+    public uint Position { get; set; }
 
     public bool IsCompleted { get; set; }
 

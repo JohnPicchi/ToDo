@@ -32,14 +32,15 @@ namespace ToDo.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddDbContext<ToDoContext>(opts =>
+      services.AddDbContext<DatabaseContext>(opts =>
       {
         opts.UseSqlServer(Configuration.GetConnectionString("Default"));
       });
       
       services.AddControllers(opts =>
       {
-        opts.Filters.Add(new HttpResponseExceptionFilter());
+        opts.Filters.Add(typeof(DatabaseContextTransactionFilter));
+        opts.Filters.Add(typeof(HttpResponseExceptionFilter));
       });
       
       services.AddSwaggerGen(c =>

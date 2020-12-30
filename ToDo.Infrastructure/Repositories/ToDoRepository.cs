@@ -11,40 +11,36 @@ namespace ToDo.Infrastructure.Repositories
 {
   public class ToDoRepository : IToDoRepository
   {
-    private readonly ToDoContext toDoContext;
+    private readonly DatabaseContext dbContext;
     
-    public ToDoRepository(ToDoContext toDoContext)
+    public ToDoRepository(DatabaseContext dbContext)
     {
-      this.toDoContext = toDoContext;
+      this.dbContext = dbContext;
     }
 
     public async Task<Models.ToDo> CreateAsync(Models.ToDo toDo)
     {
       var data = Models.ToDo.Create(toDo);
       
-      var result = await toDoContext.ToDos.AddAsync(data);
-
-      await toDoContext.SaveChangesAsync();
+      var result = await dbContext.ToDos.AddAsync(data);
 
       return result.Entity;
     }
 
     public async Task DeleteAsync(Guid id)
     {
-      var data = await toDoContext.ToDos
+      var data = await dbContext.ToDos
         .SingleOrDefaultAsync(t => t.Id == id);
 
       if (data == null)
         throw new NotFoundException { Id = id };
 
-      toDoContext.ToDos.Remove(data);
-
-      await toDoContext.SaveChangesAsync();
+      dbContext.ToDos.Remove(data);
     }
 
     public async Task<IEnumerable<Models.ToDo>> GetAllAsync()
     {
-      var toDos = await toDoContext.ToDos
+      var toDos = await dbContext.ToDos
         .ToListAsync();
 
       return toDos;
@@ -52,7 +48,7 @@ namespace ToDo.Infrastructure.Repositories
 
     public async Task<Models.ToDo> GetAsync(Guid id)
     {
-      var toDo = await toDoContext.ToDos
+      var toDo = await dbContext.ToDos
         .FirstOrDefaultAsync(t => t.Id == id);
 
       if (toDo == null)
@@ -63,15 +59,13 @@ namespace ToDo.Infrastructure.Repositories
 
     public async Task UpdateAsync(Models.ToDo toDo)
     {
-      var data = await toDoContext.ToDos
+      var data = await dbContext.ToDos
         .SingleOrDefaultAsync(t => t.Id == toDo.Id);
 
       if (data == null)
         throw new NotFoundException { Id = toDo.Id };
 
       data.Update(toDo);
-      
-      await toDoContext.SaveChangesAsync();
     }
   }
 }

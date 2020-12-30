@@ -9,7 +9,7 @@ using ToDo.Infrastructure;
 
 namespace ToDo.Infrastructure.Migrations
 {
-    [DbContext(typeof(ToDoContext))]
+    [DbContext(typeof(DatabaseContext))]
     [Migration("20201229213457_InitialMigration")]
     partial class InitialMigration
     {
